@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Travel Itinerary Planner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Fonts for Nice Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', Arial, sans-serif;
+            background: linear-gradient(135deg, #fdf6e3 0%, #f8e0b9 100%);
+            margin: 0;
+            min-height: 100vh;
+        }
+        .main-card {
+            background: #fffbe7;
+            max-width: 500px;
+            margin: 48px auto 0 auto;
+            border-radius: 18px;
+            box-shadow: 0 6px 30px 0 rgba(204,178,115,0.22);
+            padding: 38px 34px 36px 34px;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+        .main-card:hover {
+            box-shadow: 0 10px 40px 0 rgba(212,176,72,0.22);
+        }
+        .logo {
+            width: 56px;
+            margin: auto;
+            display: block;
+            margin-bottom: 14px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px #ffe7b099;
+        }
+        h1 {
+            color: #cb9b35;
+            font-family: inherit;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.1rem;
+        }
+        .desc {
+            color: #80724a;
+            text-align: center;
+            font-size: 1.17rem;
+            margin-bottom: 28px;
+        }
+        form label {
+            font-weight: 600;
+            color: #8c740d;
+            margin-top: 1em;
+            margin-bottom: 0.16em;
+            display: block;
+            text-align: left;
+            font-size: 1.1em;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 11px 10px;
+            border-radius: 7px;
+            border: 1px solid #e7daaf;
+            margin-bottom: 8px;
+            margin-top: 3px;
+            font-size: 1.05em;
+            background: #fffbea;
+            color: #545132;
+            transition: border .18s;
+        }
+        input:focus, select:focus {
+            border: 1.5px solid #ffd96d;
+            outline: none;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 1em;
+            margin-bottom: 8px;
+        }
+        .checkbox-container label {
+            margin: 0;
+            font-size: 1em;
+            font-weight: normal;
+        }
+        input[type="checkbox"] {
+            margin: 0 10px 0 0;
+            width: auto;
+            accent-color: #ffd767;
+        }
+        button {
+            width: 100%;
+            padding: 14px 0;
+            background: linear-gradient(90deg, #ffdb7b 60%, #f8c471 100%);
+            color: #815e12;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: .03em;
+            border: none;
+            border-radius: 7px;
+            margin-top: 22px;
+            margin-bottom: 9px;
+            cursor: pointer;
+            transition: background 0.17s, color .1s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #f1be41 40%, #efb234 100%);
+            color: #fff8df;
+        }
+        #result {
+            margin-top: 24px;
+            min-height: 75px;
+            background: #f5edc1;
+            border-radius: 9px;
+            border-left: 5px solid #ffd767;
+            padding: 19px 19px 15px 18px;
+            color: #4b471a;
+            font-size: 1.09rem;
+            box-shadow: 0 1px 10px #eae8c480;
+            animation: fadeIn 0.7s;
+            white-space: pre-line;
+        }
+        .loading-dots {
+            display: inline-block;
+            letter-spacing: 2px;
+        }
+        @keyframes fadeIn { from { opacity: 0;} to { opacity: 1;} }
+        @media (max-width:600px){
+            .main-card {
+                max-width: 97vw;
+                padding: 15vw 6vw 12vw 6vw;
+                margin-top: 6vw;
+            }
+            h1 { font-size: 1.3rem;}
+            .desc{ font-size: 1rem;}
+        }
+    </style>
+</head>
+<body>
+    <div class="main-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/2304/2304336.png" alt="Trip globe" class="logo">
+        <h1>AI Travel Itinerary Planner</h1>
+        <p class="desc">Create personalized and sustainable trip itineraries based on your preferences, budget, and duration.</p>
+        <form id="tripForm" autocomplete="off">
+            <label for="destination">Destination*</label>
+            <input type="text" id="destination" name="destination" required placeholder="e.g. Paris">
+            
+            <label for="duration">Trip Duration (days)*</label>
+            <input type="number" id="duration" name="duration" required min="1" placeholder="e.g. 5">
+            
+            <label for="budget">Budget (INR)*</label>
+            <input type="number" id="budget" name="budget" required min="1" placeholder="e.g. 80000">
+
+            <label for="companion">Trip Companion</label>
+            <select id="companion" name="companion">
+                <option value="none">Standard</option>
+                <option value="foodie guide">Foodie Guide</option>
+                <option value="history expert">History Expert</option>
+                <option value="adventure buddy">Adventure Buddy</option>
+            </select>
+
+            <label for="language">Language</label>
+            <select id="language" name="language">
+                <option value="English">English</option>
+                <option value="Spanish">Español</option>
+                <option value="French">Français</option>
+                <option value="German">Deutsch</option>
+                <option value="Japanese">日本語</option>
+            </select>
+            
+            <div class="checkbox-container">
+                <input type="checkbox" id="sustainable" name="sustainable">
+                <label for="sustainable">Enable Sustainability Mode</label>
+            </div>
+            
+            <button type="submit" id="generateButton">Generate Itinerary</button>
+        </form>
+        <div id="result">Fill in your trip details above and get a custom travel plan!</div>
+    </div>
+    <script>
+        document.getElementById('tripForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const des = document.getElementById('destination').value.trim();
+            const dur = document.getElementById('duration').value.trim();
+            const bud = document.getElementById('budget').value.trim();
+            const companion = document.getElementById('companion').value;
+            const language = document.getElementById('language').value;
+            const sustainable = document.getElementById('sustainable').checked;
+
+            const generateButton = document.getElementById('generateButton');
+            generateButton.disabled = true;
+            generateButton.innerText = 'Generating...';
+            
+            document.getElementById('result').innerHTML = '<span class="loading-dots">Generating itinerary<span>.</span><span>.</span><span>.</span></span>';
+
+            let prompt = `Create a detailed travel itinerary for a trip to ${des} for ${dur} days with a budget of ${bud} INR. The itinerary should be structured with markdown headings for each day (e.g., "## Day 1: Arrival & Exploration"). The itinerary should include a suggested schedule for each day, including activities, attractions, and meals.`;
+
+            if (companion !== 'none') {
+                prompt += ` Act as a ${companion} and tailor the recommendations to that persona.`;
+            }
+
+            if (sustainable) {
+                prompt += ` The plan should focus on sustainable and eco-friendly options, such as local homestays, public transport, and low-carbon activities.`;
+            }
+
+            prompt += ` The itinerary should be in ${language}. Also, include a short section at the end with a markdown heading "### Travel Phrases" and a list of 5 essential travel phrases in both English and ${language}.`;
+
+            // Replace YOUR_API_KEY with your actual Gemini API key
+            const apiKey = "AIzaSyD7hKSQ4sBCRduW4C9P0sJfGjIoNtb3YK4";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                tools: [{ "google_search": {} }],
+            };
+
+            const maxRetries = 5;
+            let retries = 0;
+            let success = false;
+            while (retries < maxRetries && !success) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        console.error('API responded with an error:', response.status, await response.text());
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    const itinerary = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (itinerary) {
+                        document.getElementById('result').innerText = itinerary;
+                        success = true;
+                    } else {
+                        document.getElementById('result').innerText = 'No itinerary generated. Please try again.';
+                        success = true;
+                    }
+                } catch (err) {
+                    console.error('Error fetching itinerary:', err);
+                    retries++;
+                    if (retries < maxRetries) {
+                        await new Promise(res => setTimeout(res, Math.pow(2, retries) * 1000));
+                    } else {
+                        document.getElementById('result').innerText = 'Error fetching itinerary after multiple retries. Please check your network connection and try again later.';
+                    }
+                } finally {
+                    generateButton.disabled = false;
+                    generateButton.innerText = 'Generate Itinerary';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
